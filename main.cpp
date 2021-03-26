@@ -96,7 +96,6 @@ int main(int argc, char *argv[]) {
   Application app({1280, 720}, argc, argv);
   Application::setOpenGLFlags();
   app.registerKeyCallback(GLFW_KEY_ESCAPE, programQuit);
-
   app.registerKeyCallback(GLFW_KEY_W, wasdKeyPress);
   app.registerKeyCallback(GLFW_KEY_A, wasdKeyPress);
   app.registerKeyCallback(GLFW_KEY_S, wasdKeyPress);
@@ -106,9 +105,6 @@ int main(int argc, char *argv[]) {
   lastY = app.getWindow()->getWindowSize().y / 2.0f;
 
   glCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-
-  Shader shader_shadow("shaders/shadow_shader.glsl", false);
-  ;
 
   Shader shader_tex("shaders/lighting_shader.glsl", false);
   shader_tex.bind();
@@ -177,7 +173,7 @@ int main(int argc, char *argv[]) {
   glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)nullptr);
 
   // load textures
   // -------------
@@ -192,9 +188,7 @@ int main(int argc, char *argv[]) {
   unsigned int cubemapTexture = CubeMapTexture::loadCubemap(faces);
 
   lightsManager = new LightsManager;
- //
    lightsManager->addLight(LightsManager::DirectionalLight("sun", {0, -5, -15}, {0.1, 0.1, 0.1}, {1, 0.9, 0.7}, {1, 1, 1}));
-  //lightsManager->addLight(LightsManager::SpotLight("sun",{-2.0f, 0.0f, -1.0f},{0,0,0},{0.1,0.1,0.1},{1,1,1},{1,1,1},glm::cos(glm::radians(180.f)),180,1.0f,0.09f,0.032f));
 
   // camera
   camera = new Camera(glm::vec3(-95, 0, 35));
@@ -203,33 +197,7 @@ int main(int argc, char *argv[]) {
   glfwSetCursorPosCallback(app.getWindow()->getGLFWWindow(), mouse_callback);
   glfwSetScrollCallback(app.getWindow()->getGLFWWindow(), scroll_callback);
 
-  meshes.push_back(new Mesh("resources/models/Starship.obj"));
-  meshes.back()->addTexture("textures/Starship_Base_Color.png")->compile();
-  meshes.back()->setScale({0.005, 0.005, 0.005})->compile();
-  meshes.back()->setPosition({-95, -5, 15});
-  meshes.push_back(new Mesh("resources/models/pahrump_print_1x.obj"));
-  meshes.back()->addScaledTexture("textures/marsTexture.jpg", {2, 2});
-  meshes.back()->setScale({1, 1, 1})->compile();
-  meshes.back()->setPosition({0, -20, 0});
-
-  meshes.push_back(new Mesh("resources/models/Rover.obj"));
-  meshes.back()->compile();
-  meshes.back()->setPosition({-95, -5.5, 45})->setScale({0.1, 0.1, 0.1});
-  meshes.push_back(new Mesh("resources/models/HDU_lowRez_part1.obj"));
-  meshes.back()->compile()->setPosition({-150, -6, 25})->setScale({0.01, 0.01, 0.01});
-  meshes.push_back(new Mesh("resources/models/HDU_lowRez_part1.obj"));
-  meshes.back()->compile()->setPosition({-150, -6, 35.3})->setOrigin({-150, -6, 35.3})->setScale({0.01, 0.01, 0.01})->setRotation({0, 90, 0});
-  meshes.push_back(new Mesh("resources/models/HDU_lowRez_part2.obj"));
-  meshes.back()->compile()->setPosition({-150, -6, 25})->setScale({0.01, 0.01, 0.01});
-  meshes.push_back(new Mesh("resources/models/Cartoon Low pOly Solar Panel.obj"));
-  meshes.back()->compile()->setPosition({-160, -4, 32})->setOrigin({-160, -4, 32})->setScale({0.01, 0.01, 0.01})->setRotation({0, 90, 0});
-  meshes.push_back(new Mesh("resources/models/Cartoon Low pOly Solar Panel.obj"));
-  meshes.back()->compile()->setPosition({-140, -4, 27})->setOrigin({-140, -4, 27})->setScale({0.01, 0.01, 0.01})->setRotation({0, 90, 0});
-
   double lasttime = glfwGetTime();
-  Mesh mro("resources/models/MRO.3ds");
-  mro.setPosition({0, 400, 0})->setOrigin(mro.position)->setRotation({0, 0, 90})->setScale({0.3, 0.3, 0.3});
-  mro.compile();
   while (!app.getShouldClose()) {
 	app.getWindow()->updateFpsCounter();
 	auto currentFrame = glfwGetTime();
@@ -238,19 +206,19 @@ int main(int argc, char *argv[]) {
 	moveCamera();
 	Renderer::clear({0, 0, 0, 1});
 	shader_tex.bind();
+
 	camera->passDataToShader(&shader_tex);
 	lightsManager->passDataToShader(&shader_tex);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-	renderScene(&shader_tex, meshes, planes, false);
-	mro.draw(&shader_tex);
-	// draw skybox as last
 
+	renderScene(&shader_tex, meshes, planes, false);
+	// draw skybox as last
 	glDepthFunc(GL_LEQUAL);// change depth function so depth test passes when values are equal to depth buffer's content
 	shader_skybox.bind();
 	shader_skybox.setUniform1f("intensity", 1);
 	auto view = glm::mat4(glm::mat3(camera->GetViewMatrix()));// remove translation from the view matrix
 	shader_skybox.setUniformMat4f("view", view);
 	shader_skybox.setUniformMat4f("projection", camera->getProjection());
+
 	// skybox cube
 	glBindVertexArray(skyboxVAO);
 	glActiveTexture(GL_TEXTURE0);
@@ -265,11 +233,6 @@ int main(int argc, char *argv[]) {
 	  // TODO: Put the thread to sleep, yield, or simply do nothing
 	}
 	lasttime += 1.0 / 60;
-	mro.setPosition(mro.position + glm::vec3(6, 0, 6))->setOrigin(mro.position);
-	if (mro.position.x > 2000) {
-	  mro.position.x = -2000;
-	  mro.position.z = -2000;
-	}
   }
   glfwTerminate();
   exit(EXIT_SUCCESS);
