@@ -96,10 +96,12 @@ int main(int argc, char *argv[]) {
   Application app({1280, 720}, argc, argv);
   Application::setOpenGLFlags();
   app.registerKeyCallback(GLFW_KEY_ESCAPE, programQuit);
+  /*
   app.registerKeyCallback(GLFW_KEY_W, wasdKeyPress);
   app.registerKeyCallback(GLFW_KEY_A, wasdKeyPress);
   app.registerKeyCallback(GLFW_KEY_S, wasdKeyPress);
   app.registerKeyCallback(GLFW_KEY_D, wasdKeyPress);
+  */
 
   lastX = app.getWindow()->getWindowSize().x / 2.0f;
   lastY = app.getWindow()->getWindowSize().y / 2.0f;
@@ -120,7 +122,6 @@ int main(int argc, char *argv[]) {
   shader_skybox.setUniform1f("intensity", 0.3);
   float lightRot = {0};
   float skyboxIntensity=0;
-  ObjLoader objLoader;
   std::vector<Mesh *> meshes;
 
   std::vector<Plane *> planes;
@@ -193,12 +194,12 @@ int main(int argc, char *argv[]) {
   lightsManager->addLight(LightsManager::DirectionalLight("sun", {0, -5, -15}, {0.1, 0.1, 0.1}, {1, 0.9, 0.7}, {1, 1, 1}));
 
   // camera
-  camera = new Camera(glm::vec3(0, 0, 0));
+  camera = new Camera(glm::vec3(15.7, 24.7, 150));
   camera->setWindowSize(app.getWindow()->getWindowSize());
 
   glfwSetCursorPosCallback(app.getWindow()->getGLFWWindow(), mouse_callback);
   glfwSetScrollCallback(app.getWindow()->getGLFWWindow(), scroll_callback);
-
+  // loading models and applying textures
   meshes.push_back(new Mesh("resources/models/Cottage_FREE.obj"));
   meshes.back()->addTexture("textures/cottage_Dirt_Base_Color.png")->setPosition({16,22.8,154})->compile();
 
