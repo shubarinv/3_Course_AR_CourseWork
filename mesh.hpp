@@ -63,6 +63,14 @@ class Mesh {
   glm::vec3 rotation{0, 0, 0};
   glm::vec3 scale{1, 1, 1};
 
+  unsigned long long int countVertices() {
+	unsigned long long int vertCount = loadedOBJ.vertices.size();
+	for (auto &mesh : relatedMeshes) {
+	  vertCount += mesh.loadedOBJ.vertices.size();
+	}
+	return vertCount;
+  }
+
   Mesh *draw(Shader *shader) {
 	shader->bind();
 	shader->setUniformMat4f("model", model);

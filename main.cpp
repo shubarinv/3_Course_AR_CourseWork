@@ -118,6 +118,8 @@ int main(int argc, char *argv[]) {
   shader_skybox.bind();
   shader_skybox.setUniform1i("skybox", 0);
   shader_skybox.setUniform1f("intensity", 0.3);
+  float lightRot = {0};
+  float skyboxIntensity=0;
   ObjLoader objLoader;
   std::vector<Mesh *> meshes;
 
@@ -188,16 +190,43 @@ int main(int argc, char *argv[]) {
   unsigned int cubemapTexture = CubeMapTexture::loadCubemap(faces);
 
   lightsManager = new LightsManager;
-   lightsManager->addLight(LightsManager::DirectionalLight("sun", {0, -5, -15}, {0.1, 0.1, 0.1}, {1, 0.9, 0.7}, {1, 1, 1}));
+  lightsManager->addLight(LightsManager::DirectionalLight("sun", {0, -5, -15}, {0.1, 0.1, 0.1}, {1, 0.9, 0.7}, {1, 1, 1}));
 
   // camera
-  camera = new Camera(glm::vec3(-95, 0, 35));
+  camera = new Camera(glm::vec3(0, 0, 0));
   camera->setWindowSize(app.getWindow()->getWindowSize());
 
   glfwSetCursorPosCallback(app.getWindow()->getGLFWWindow(), mouse_callback);
   glfwSetScrollCallback(app.getWindow()->getGLFWWindow(), scroll_callback);
 
+  meshes.push_back(new Mesh("resources/models/Cottage_FREE.obj"));
+  meshes.back()->addTexture("textures/cottage_Dirt_Base_Color.png")->setPosition({16,22.8,154})->compile();
+
+  meshes.push_back(new Mesh("resources/models/Cottage_obj.obj"));
+  meshes.back()->addTexture("textures/cottage_diffuse.png")->setPosition({30,30,-150})->setScale({0.25,0.25,0.25})->compile();
+
+  meshes.push_back(new Mesh(meshes.back()->loadedOBJ));
+  meshes.back()->addTexture("textures/cottage_diffuse.png")->setPosition({51,28.6,-128})->setOrigin({51,28.6,-128})->setRotation({0,34,0})->setScale({0.25,0.25,0.25})->compile();
+
+  meshes.push_back(new Mesh("resources/models/camp_fire.fbx"));
+  meshes.back()->addTexture("textures/camp_fire.jpg")->setPosition({29,22.78,153})->setOrigin({29,22.78,153})->setScale({0.3,0.3,0.3})->setRotation({270,0,0})->compile();
+
+  meshes.push_back(new Mesh("resources/models/table.obj"));
+  meshes.back()->setPosition({12,23.5,148.5})->setOrigin({12,23.5,148.5})->setRotation({0,90,0})->setScale({0.007,0.007,0.007})->compile();
+  meshes.push_back(new Mesh("resources/models/Vase01.obj"));
+  meshes.back()->setPosition({12,23.9,148.5})->setOrigin({12,23.9,148.5})->setScale({0.01,0.01,0.01})->compile();
+  meshes.push_back(new Mesh("resources/models/Palm_01.obj"));
+  meshes.back()->setPosition({12,24.2,148.5})->setOrigin({12,24.2,148.5})->setScale({0.03,0.03,0.03})->compile();
+
+  meshes.push_back(new Mesh("resources/models/Icelandic mountain.obj"));
+  meshes.back()->setTextures({})->setTextures({new Texture("textures/ColorFx.png"),new Texture("textures/image.png")})->setScale({50,50,50})->setPosition({0,-265,0})->compile();
   double lasttime = glfwGetTime();
+  unsigned long long int vertCount = 0;
+  for (auto &mesh : meshes) {
+	vertCount += mesh->countVertices();
+  }
+  LOG_S(INFO) << "Total vertices: " << vertCount;
+
   while (!app.getShouldClose()) {
 	app.getWindow()->updateFpsCounter();
 	auto currentFrame = glfwGetTime();
@@ -214,7 +243,7 @@ int main(int argc, char *argv[]) {
 	// draw skybox as last
 	glDepthFunc(GL_LEQUAL);// change depth function so depth test passes when values are equal to depth buffer's content
 	shader_skybox.bind();
-	shader_skybox.setUniform1f("intensity", 1);
+	shader_skybox.setUniform1f("intensity", skyboxIntensity);
 	auto view = glm::mat4(glm::mat3(camera->GetViewMatrix()));// remove translation from the view matrix
 	shader_skybox.setUniformMat4f("view", view);
 	shader_skybox.setUniformMat4f("projection", camera->getProjection());
@@ -229,10 +258,40 @@ int main(int argc, char *argv[]) {
 
 	glCall(glfwSwapBuffers(app.getWindow()->getGLFWWindow()));
 	glfwPollEvents();
+	LOG_S(INFO) << "POS X:"<<camera->Position.x<<" Y:"<<camera->Position.y<<" Z:"<<camera->Position.z;
 	while (glfwGetTime() < lasttime + 1.0 / 60) {
 	  // TODO: Put the thread to sleep, yield, or simply do nothing
 	}
 	lasttime += 1.0 / 60;
+    lightRot += 0.002;
+    if (lightRot >= 8) {
+      lightRot = 0.005;
+    }
+
+    if (lightRot > 5||lightRot<0.5 ) {
+      lightsManager->getDirLightByName("sun")->diffuse = {0, 0, 0};
+      lightsManager->getDirLightByName("sun")->specular = {0, 0, 0};
+      skyboxIntensity=0.4;
+    } else {
+      lightsManager->getDirLightByName("sun")->specular = {1,0.95,0.79};
+      lightsManager->getDirLightByName("sun")->diffuse = {1,0.95,0.79};
+      if(lightRot>4){
+        lightsManager->getDirLightByName("sun")->specular = {1,lightsManager->getDirLightByName("sun")->specular.y-0.001,lightsManager->getDirLightByName("sun")->specular.z-0.001};
+        lightsManager->getDirLightByName("sun")->diffuse = {1,lightsManager->getDirLightByName("sun")->diffuse.y-0.001,lightsManager->getDirLightByName("sun")->diffuse.z-0.001};
+        skyboxIntensity-=0.0015;
+      }else{
+        lightsManager->getDirLightByName("sun")->specular ={1,lightsManager->getDirLightByName("sun")->specular.y+0.001,lightsManager->getDirLightByName("sun")->specular.z+0.001};
+        lightsManager->getDirLightByName("sun")->diffuse ={1,lightsManager->getDirLightByName("sun")->diffuse.y+0.001,lightsManager->getDirLightByName("sun")->diffuse.z+0.001};
+        skyboxIntensity+=0.002;
+      }
+      if(skyboxIntensity>1){
+        skyboxIntensity=1;
+      }
+      if(skyboxIntensity<0.3){
+        skyboxIntensity=0.3;
+      }
+    }
+    lightsManager->getDirLightByName("sun")->direction = {sin(lightRot), cos(lightRot), cos(lightRot)};
   }
   glfwTerminate();
   exit(EXIT_SUCCESS);
