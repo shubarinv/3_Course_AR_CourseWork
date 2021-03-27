@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 19.10.2020.
-//
 
 #ifndef CGLABS__BUFFER_HPP_
 #define CGLABS__BUFFER_HPP_

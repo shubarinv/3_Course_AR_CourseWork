@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 20.01.2021.
-//
 
 #ifndef CGCOURSEWORK_PLANE_H
 #define CGCOURSEWORK_PLANE_H

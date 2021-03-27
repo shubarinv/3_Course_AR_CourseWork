@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 20.11.2020.
-//
 
 #ifndef CGLABS__TEXTURE_HPP_
 #define CGLABS__TEXTURE_HPP_

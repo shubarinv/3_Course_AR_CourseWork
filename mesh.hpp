@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 06.01.2021.
-//
 
 #ifndef CGLABS__MESH_HPP_
 #define CGLABS__MESH_HPP_

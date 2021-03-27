@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 03.12.2020.
-//
 
 #ifndef CGLABS__APPLICATION_HPP_
 #define CGLABS__APPLICATION_HPP_

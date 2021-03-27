@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 02.12.2020.
-//
 #ifndef CG_LABS_FUNCTIONS_HPP
 #define CG_LABS_FUNCTIONS_HPP
 #if defined(__APPLE__)

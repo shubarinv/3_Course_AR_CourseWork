@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 15.01.2021.
-//
 
 #ifndef CGLABS__LIGHTS_MANAGER_HPP_
 #define CGLABS__LIGHTS_MANAGER_HPP_

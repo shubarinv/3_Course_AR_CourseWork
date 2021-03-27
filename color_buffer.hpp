@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 08.01.2021.
-//
 
 #ifndef CGLABS__COLOR_BUFFER_HPP_
 #define CGLABS__COLOR_BUFFER_HPP_

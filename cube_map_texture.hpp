@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 23.01.2021.
-//
 
 #ifndef CGCOURSEWORK_CUBE_MAP_TEXTURE_HPP
 #define CGCOURSEWORK_CUBE_MAP_TEXTURE_HPP

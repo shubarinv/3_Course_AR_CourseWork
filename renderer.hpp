@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 12.10.2020.
-//
 
 #ifndef CGLABS__RENDERER_HPP_
 #define CGLABS__RENDERER_HPP_

@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 12.10.2020.
-//
 
 #ifndef CGLABS__VERTEX_BUFFER_LAYOUT_HPP_
 #define CGLABS__VERTEX_BUFFER_LAYOUT_HPP_

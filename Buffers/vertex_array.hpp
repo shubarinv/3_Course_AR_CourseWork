@@ -1,6 +1,3 @@
-//
-// Created by Vladimir Shubarin on 12.10.2020.
-//
 
 #ifndef CGLABS__VERTEX_ARRAY_HPP_
 #define CGLABS__VERTEX_ARRAY_HPP_
